@@ -9,6 +9,7 @@ Absolvierte Touren sind unter "vergangene Fahrten" einsehbar und können als .gp
 
 
 English users:
+
 App for Android for cyclists. Easy to write down your own bike tour including map on your local smartphone. No cloud, no data slingshots, no advertising! 
 Planned tours can be imported as.gpx files and displayed via the map, so planning and recording 
 is visible on a map. Completed tours can be viewed under "past trips" and can be exported as.gpx files.
