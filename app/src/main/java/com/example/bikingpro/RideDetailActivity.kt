@@ -27,8 +27,6 @@ class RideDetailActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private var currentRide: Ride? = null
 
-    private val germanLocale = Locale.GERMANY
-
     private val gpxSaver =
         registerForActivityResult(
             ActivityResultContracts.CreateDocument("application/gpx+xml")
@@ -83,24 +81,18 @@ class RideDetailActivity : AppCompatActivity() {
     }
 
     private fun showRide(ride: Ride) {
-        findViewById<TextView>(R.id.tvStatDistance).text = String.format(
-            germanLocale, "Streckenlänge: %.2f km", ride.distanceMeters / 1000.0
-        )
-        findViewById<TextView>(R.id.tvStatDuration).text = String.format(
-            germanLocale, "Fahrdauer: %s", formatDuration(ride.durationSeconds)
-        )
-        findViewById<TextView>(R.id.tvStatMax).text = String.format(
-            germanLocale, "Höchstgeschwindigkeit: %.1f km/h", ride.maxSpeedKmh
-        )
-        findViewById<TextView>(R.id.tvStatMin).text = String.format(
-            germanLocale, "Minimale Geschwindigkeit: %.1f km/h", ride.minSpeedKmh
-        )
-        findViewById<TextView>(R.id.tvStatAvg).text = String.format(
-            germanLocale, "Durchschnittsgeschwindigkeit: %.1f km/h", ride.avgSpeedKmh
-        )
-        findViewById<TextView>(R.id.tvStatAscent).text = String.format(
-            germanLocale, "Maximaler Anstieg: %.0f m", ride.ascentMeters
-        )
+        findViewById<TextView>(R.id.tvStatDistance).text =
+            getString(R.string.fmt_stat_distance, ride.distanceMeters / 1000.0)
+        findViewById<TextView>(R.id.tvStatDuration).text =
+            getString(R.string.fmt_stat_duration, formatDuration(ride.durationSeconds))
+        findViewById<TextView>(R.id.tvStatMax).text =
+            getString(R.string.fmt_stat_max, ride.maxSpeedKmh)
+        findViewById<TextView>(R.id.tvStatMin).text =
+            getString(R.string.fmt_stat_min, ride.minSpeedKmh)
+        findViewById<TextView>(R.id.tvStatAvg).text =
+            getString(R.string.fmt_stat_avg, ride.avgSpeedKmh)
+        findViewById<TextView>(R.id.tvStatAscent).text =
+            getString(R.string.fmt_stat_ascent, ride.ascentMeters)
 
         val geoPoints = ride.routePoints.map { GeoPoint(it.lat, it.lon) }
         if (geoPoints.size >= 2) {
@@ -120,9 +112,9 @@ class RideDetailActivity : AppCompatActivity() {
         val minutes = (seconds % 3600) / 60
         val secs = seconds % 60
         return if (hours > 0) {
-            String.format(germanLocale, "%d:%02d:%02d h", hours, minutes, secs)
+            getString(R.string.fmt_duration_hours, hours, minutes, secs)
         } else {
-            String.format(germanLocale, "%d:%02d min", minutes, secs)
+            getString(R.string.fmt_duration_minutes, minutes, secs)
         }
     }
 
@@ -146,7 +138,7 @@ class RideDetailActivity : AppCompatActivity() {
         sb.append("<gpx version=\"1.1\" creator=\"Biking Pro\" ")
         sb.append("xmlns=\"http://www.topografix.com/GPX/1/1\">\n")
         sb.append("  <trk>\n")
-        sb.append("    <name>Biking Pro Fahrt</name>\n")
+        sb.append("    <name>").append(getString(R.string.gpx_track_name)).append("</name>\n")
         sb.append("    <trkseg>\n")
         for (p in ride.routePoints) {
             sb.append(String.format(Locale.US, "      <trkpt lat=\"%.7f\" lon=\"%.7f\"", p.lat, p.lon))

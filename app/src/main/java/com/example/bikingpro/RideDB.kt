@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.io.File
 import java.util.Locale
 
 /** Ein einzelner Routenpunkt mit optionaler Höhe in Metern. */
@@ -33,9 +34,25 @@ data class Tour(
 
 /** Lokale Datenbank (SQLite) für gespeicherte Fahrten und geplante Touren.
  *  Version 4: fügt die Tabelle für geplante Touren hinzu; bestehende
- *  Fahrten der Version 3 bleiben erhalten. */
+ *  Fahrten der Version 3 bleiben erhalten.
+ *  Zusätzlich wird vor jeder Datenbank-Migration automatisch eine
+ *  Sicherungskopie der Datenbankdatei angelegt. Fehlt die Datenbankdatei
+ *  (etwa nach einem fehlgeschlagenen Update), wird sie beim nächsten
+ *  Start aus der Sicherungskopie wiederhergestellt. */
 class RideDb private constructor(context: Context) :
-    SQLiteOpenHelper(context, "biking_pro.db", null, 4) {
+    SQLiteOpenHelper(context, DATABASE_NAME, null, 4) {
+
+    private val dbFile = context.getDatabasePath(DATABASE_NAME)
+    private val backupFile = context.getDatabasePath(BACKUP_NAME)
+
+    init {
+        // Notfall-Wiederherstellung: Die Datenbankdatei fehlt, eine
+        // Sicherungskopie existiert jedoch. Dann wird die Kopie
+        // zurückgespielt, bevor die Datenbank geöffnet wird.
+        if (!dbFile.exists() && backupFile.exists()) {
+            copyFile(backupFile, dbFile)
+        }
+    }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(CREATE_RIDES)
@@ -43,12 +60,31 @@ class RideDb private constructor(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Vor der Migration wird eine Sicherheitskopie angelegt. Schlägt die
+        // Migration fehl, bleibt die Kopie erhalten und kann über den Import
+        // in den Einstellungen oder beim nächsten App-Start zurückgespielt
+        // werden.
+        backupDatabaseFiles()
         if (oldVersion < 3) {
             db.execSQL("DROP TABLE IF EXISTS rides")
             db.execSQL(CREATE_RIDES)
         }
         if (oldVersion < 4) {
             db.execSQL(CREATE_TOURS)
+        }
+    }
+
+    /** Legt eine Sicherungskopie der Datenbankdatei an. */
+    private fun backupDatabaseFiles() {
+        if (dbFile.exists()) copyFile(dbFile, backupFile)
+    }
+
+    /** Kopiert eine Datei vollständig von der Quelle zum Ziel. */
+    private fun copyFile(source: File, target: File) {
+        source.inputStream().use { input ->
+            target.outputStream().use { output ->
+                input.copyTo(output)
+            }
         }
     }
 
@@ -149,6 +185,9 @@ class RideDb private constructor(context: Context) :
     }
 
     companion object {
+        const val DATABASE_NAME = "biking_pro.db"
+        const val BACKUP_NAME = "biking_pro.db.bak"
+
         private val CREATE_RIDES = """
             CREATE TABLE rides (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

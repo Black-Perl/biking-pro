@@ -27,10 +27,23 @@
         <activity android:name=".HistoryActivity" android:exported="false" />
         <activity android:name=".RideDetailActivity" android:exported="false" />
         <activity android:name=".ToursActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
 
         <service
             android:name=".TrackingService"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <!-- Speichert die in den Einstellungen gewählte App-Sprache dauerhaft.
+             Ab Android 13 übernimmt das das System automatisch; auf älteren
+             Geräten (Android 8 bis 12) sorgt dieser Dienst von AppCompat dafür. -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
     </application>
 </manifest>

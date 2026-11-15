@@ -3,6 +3,7 @@ package com.example.bikingpro
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -24,7 +25,6 @@ import java.util.Locale
  *  Papierkorbsymbol gelöscht werden. */
 class HistoryActivity : AppCompatActivity() {
 
-    private val germanLocale = Locale.GERMANY
     private var loadedRides: List<Ride> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,9 +89,9 @@ class HistoryActivity : AppCompatActivity() {
         val minutes = (seconds % 3600) / 60
         val secs = seconds % 60
         return if (hours > 0) {
-            String.format(germanLocale, "%d:%02d:%02d h", hours, minutes, secs)
+            getString(R.string.fmt_duration_hours, hours, minutes, secs)
         } else {
-            String.format(germanLocale, "%d:%02d min", minutes, secs)
+            getString(R.string.fmt_duration_minutes, minutes, secs)
         }
     }
 
@@ -104,12 +104,14 @@ class HistoryActivity : AppCompatActivity() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: layoutInflater.inflate(R.layout.item_ride, parent, false)
             val ride = loadedRides[position]
-            val dateFormat = SimpleDateFormat("EEEE, dd.MM.yyyy, HH:mm", germanLocale)
+            val datePattern = DateFormat.getBestDateTimePattern(
+                Locale.getDefault(), "EEEEdMMMMyyyyjm"
+            )
+            val dateFormat = SimpleDateFormat(datePattern, Locale.getDefault())
             view.findViewById<TextView>(R.id.tvRideDate).text =
                 dateFormat.format(Date(ride.startTime))
-            view.findViewById<TextView>(R.id.tvRideInfo).text = String.format(
-                germanLocale,
-                "%.2f km in %s, Ø %.1f km/h",
+            view.findViewById<TextView>(R.id.tvRideInfo).text = getString(
+                R.string.fmt_ride_info,
                 ride.distanceMeters / 1000.0,
                 formatDuration(ride.durationSeconds),
                 ride.avgSpeedKmh

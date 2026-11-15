@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
-import java.util.Locale
 
 /** Seite mit den geplanten Touren: GPX-Import, Auswahl für die Hauptkarte,
  *  Umbenennen über das Stiftsymbol und Löschen über das Papierkorbsymbol. */
@@ -228,9 +227,8 @@ class ToursActivity : AppCompatActivity() {
             val view = convertView ?: layoutInflater.inflate(R.layout.item_tour, parent, false)
             val tour = loadedTours[position]
             view.findViewById<TextView>(R.id.tvTourName).text = tour.name
-            view.findViewById<TextView>(R.id.tvTourInfo).text = String.format(
-                Locale.GERMANY, "%.2f km, %d Punkte",
-                tourLengthKm(tour), tour.routePoints.size
+            view.findViewById<TextView>(R.id.tvTourInfo).text = getString(
+                R.string.fmt_tour_info, tourLengthKm(tour), tour.routePoints.size
             )
             view.setOnClickListener { selectTour(tour) }
             view.findViewById<ImageButton>(R.id.btnEditTour)

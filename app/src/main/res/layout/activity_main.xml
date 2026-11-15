@@ -103,5 +103,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/btn_tours" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_settings" />
     </LinearLayout>
 </ScrollView>

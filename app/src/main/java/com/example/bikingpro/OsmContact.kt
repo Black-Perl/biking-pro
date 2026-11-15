@@ -29,5 +29,5 @@ object OsmContact {
 
     /** Baut den User-Agent für OpenStreetMap-Kachelanfragen. */
     fun userAgent(context: Context): String =
-        "BikingPro/1.0 (Android; Kontakt: ${getEmail(context)})"
+        "BikingPro/1.2 (Android; Kontakt: ${getEmail(context)})"
 }
