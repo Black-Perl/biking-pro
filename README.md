@@ -7,6 +7,7 @@ Einfaches Mitschreiben der eigenen Fahrradtour inklusive Map auf dem lokalen Sma
 Es können geplante Touren als .gpx-Dateien importiert und über die Map angezeigt werden, so ist Planung und Aufzeichnung auf einer Map sichtbar.
 Absolvierte Touren sind unter "vergangene Fahrten" einsehbar und können als .gpx-Dateien exportiert werden.
 
+.
 
 English users:
 
